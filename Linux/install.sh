@@ -6,5 +6,6 @@ echo "**If it does not matches your Python3 path,you might need to edit the path
 
 cp ./drcom.py /usr/bin/drcom
 mkdir -p ~/.drcom/
+chmod 777 ~/.drcom/
 
 echo "**Installation finish!"
