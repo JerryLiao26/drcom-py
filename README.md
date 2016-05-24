@@ -10,17 +10,17 @@ Go directly to the Linux directory and execute:
 ```
 sudo ./install.sh
 ```
-After that, you shall run drcom-py in terminal through:
-```
-drcom
-```
-Before you start,remember to check the help text:
+After that, you shall run drcom-py in terminal through `drcom` command. Before you start,remember to check the help text:
 ```
 drcom --help
 ```
 or simply:
 ```
 drcom -h
+```
+To uninstall, go to Linux directory and run:
+```
+sudo ./uninstall.sh
 ```
 
 ### Windows
