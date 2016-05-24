@@ -33,5 +33,8 @@ Not available currently
 ### Python3 path incorrect
 Manually change the path in drcom.py before you install it.
 
+### Run under Mac OS
+Apple has introduced [new security policy](https://en.wikipedia.org/wiki/System_Integrity_Protection) since OS X El Capitan which forbid even root users to write /usr/bin. You might turn it off to use drcom-py but it's not officially recommended. 
+
 ### Run under Windows OS
 You might need to Google yourself to make it run in command line in Windows before official release :-(
