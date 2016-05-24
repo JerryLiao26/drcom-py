@@ -24,7 +24,7 @@ sudo ./uninstall.sh
 ```
 
 ### Mac
-Not available currently for OS X 10.11 and above
+Not available currently for OS X 10.11 and above, for other versions, refer to Linux method
 
 ### Windows
 Not available currently
