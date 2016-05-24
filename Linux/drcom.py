@@ -39,7 +39,7 @@ def load_config():
 # Write settings in config.ini
 def set_config():
     with open(file_path, 'w') as config_file:
-        config_file.write('===========\r\nUser Info\r\n===========\r\nstu_no:' + str(stu_no) + '\r\npwd:' + str(pwd) + '\r\nauth_url:' + auth_url)
+        config_file.write('===========' + os.linesep + 'User Info' + os.linesep + '===========' + os.linesep + 'stu_no:' + str(stu_no) + os.linesep + 'pwd:' + str(pwd) + os.linesep + 'auth_url:' + auth_url + os.linesep)
 
 # Start drcom confirm
 def confirm():
@@ -92,7 +92,7 @@ if param_num == 1: # Use default settings
 elif sys.argv[1] == "--show" or sys.argv[1] == "-s": # Show present settings
     load_config()
     if flag == "develop":
-        print("stu_no:" + str(stu_no) + "\r\npwd:" + str(pwd) + "\r\nauth_url:" + auth_url)
+        print("stu_no:" + str(stu_no) + os.linesep + "pwd:" + str(pwd) + os.linesep + "auth_url:" + auth_url)
 
     else:
         print('Not under develop mode!')

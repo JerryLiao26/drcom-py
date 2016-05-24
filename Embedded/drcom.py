@@ -46,8 +46,7 @@ def load_config():
 # Write settings in config.ini
 def set_config():
     with open(file_path, 'w') as config_file:
-        config_file.write('===========\r\nUser Info\r\n===========\r\nstu_no:' + str(stu_no) + '\r\npwd:' + str(pwd) + '\r\nauth_url:' + auth_url)
-
+        config_file.write('===========' + os.linesep + 'User Info' + os.linesep + '===========' + os.linesep + 'stu_no:' + str(stu_no) + os.linesep + 'pwd:' + str(pwd) + os.linesep + 'auth_url:' + auth_url + os.linesep)
 # Start drcom confirm
 def confirm():
     load_config()
@@ -75,7 +74,7 @@ def confirm():
 
 
     r = Request(auth_url_login)
-    f = urlopen(url = auth_url_login,data = urlencode(login_data).encode('utf-8'))
+    f = urlopen(url = auth_url_login,data = urlencode(login_data).encode('utf-8')) # Encode to be used under Python3
     text = f.read().decode('gbk')
     f.close()
 
@@ -96,7 +95,7 @@ if param_num == 1: # Use default settings
 
 elif sys.argv[1] == "--show" or sys.argv[1] == "-s": # Show present settings
     load_config()
-    print("stu_no:" + str(stu_no) + "\r\npwd:" + str(pwd) + "\r\nauth_url:" + auth_url)
+    print("stu_no:" + str(stu_no) + os.linesep + "pwd:" + str(pwd) + os.linesep + "auth_url:" + auth_url)
 
 elif sys.argv[1] == "--help" or sys.argv[1] == "-h": # List help text
     print('Usage:')
