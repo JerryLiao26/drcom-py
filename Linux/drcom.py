@@ -3,6 +3,10 @@
 
 import os,sys,requests
 
+# Get python version
+py_version_index = str(sys.version_info).index('major')
+py_version = str(sys.version_info)[(py_version_index + 6) : (py_version_index + 7)]
+
 # Global params
 param_num = len(sys.argv)
 self_name = sys.argv[0]
@@ -42,8 +46,14 @@ def confirm():
     load_config()
 
     # Currently depends on http://192.168.254.220/a41.js (shorten as "a41.js")
-    stu_no_login = stu_no
-    pwd_login = pwd
+    if py_version == "2":
+        stu_no_login = stu_no[ : len(stu_no) - 1]
+        pwd_login = pwd[ : len(pwd) - 1]
+
+    else:
+        stu_no_login = stu_no
+        pwd_login = pwd
+
     auth_url_login = auth_url
 
     login_data = {
@@ -115,13 +125,13 @@ elif sys.argv[1] == "--config" or sys.argv[1] == "-c": # Use custom settings,pre
 
     elif param_num == 3:
         if sys.argv[2] == "stu_no":
-            input_stu_no = input("stu_no")
+            input_stu_no = input("stu_no:")
 
         elif sys.argv[2] == "pwd":
-            input_pwd = input("pwd")
+            input_pwd = input("pwd:")
 
         elif sys.argv[2] == "auth_url":
-            input_pwd = input("auth_url")
+            input_pwd = input("auth_url:")
 
         else:
             print('invalid param ' + sys.argv[2] + '! Please check "--help" or "-h" for usage')
