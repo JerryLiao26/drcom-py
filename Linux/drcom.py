@@ -11,6 +11,7 @@ if py_version == "2": # Python 2.x
     input = raw_input
 
 # Global params
+version = "0.1beta-20160525"
 param_num = len(sys.argv)
 self_name = sys.argv[0]
 file_path = os.path.expanduser("~") + "/.drcom/drcom.config" # Create config file under ~/.drcom/
@@ -107,7 +108,7 @@ elif sys.argv[1] == "--help" or sys.argv[1] == "-h": # List help text
     print('--version | -v Show the virsion of this program')
 
 elif sys.argv[1] == "--version" or sys.argv[1] == "-v":
-    print('drcom-py version : 0.1alpha-20160524')
+    print('drcom-py version : ' + version)
     print('Author: jerryliao')
     print('Email: jerryliao26@gmail.com')
 

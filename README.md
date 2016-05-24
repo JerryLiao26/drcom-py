@@ -1,10 +1,10 @@
 # drcom-py
-This is a Drcom Web Authentication login program written in Python. So generally you should download and install *[Python](https://www.python.org/downloads/)* and *[requests(Python package)](https://github.com/kennethreitz/requests)* first. Note that Embedded version does not need *requests*.
+This is a Drcom Web Authentication login program written in Python. The program can only be guaranteed to run among Shenzhen University students who use 'SZU_WLAN' or campus cable network. There are several simple settings can be configured and more will be added to make the program flexible. Generally you should download and install *[Python](https://www.python.org/downloads/)* and *[requests(Python package)](https://github.com/kennethreitz/requests)* first, while Embedded version uses *urllib(Python3)* or *urllib,urllib2(Python2)* instead of *requests* to post data. It also removes some extended function from non-em version.
 
 ## Version
-- **0.1aplha**
-This program can only be guaranteed to run among Shenzhen University students who use 'SZU_WLAN' or campus cable network. There are several simple settings can be configured and more will be added to make the program flexible.
-- **0.1aplha-em** Embedded version uses *urllib(Python3)* or *urllib,urllib2(Python2)* instead of *requests* to send post data. It also removes some extended function from non-em version.
+**What's new in 0.1beta**
+- json for config file
+- code improvements
 
 ## Installation Guide
 ### Embedded
