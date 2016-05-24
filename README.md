@@ -5,7 +5,7 @@ This is a Drcom Web Authentication login program written in Python3. So generall
 This program can only be guaranteed to run among Shenzhen University students who use 'SZU_WLAN' or campus cable network. There are several simple settings can be configured and more will be added to make the program flexible.
 
 ## Installation Guide
-### Linux & Mac
+### Linux
 Go directly to the Linux directory and execute:
 ```
 sudo ./install.sh
@@ -22,6 +22,9 @@ To uninstall, go to Linux directory and run:
 ```
 sudo ./uninstall.sh
 ```
+
+### Mac
+Not available currently for OS X 10.11 and above
 
 ### Windows
 Not available currently
