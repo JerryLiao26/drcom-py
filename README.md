@@ -1,5 +1,5 @@
 # drcom-py
-This is a Drcom Web Authentication login program written in Python3. So generally you should download and install *Python3* and *requests(Python package)* first.
+This is a Drcom Web Authentication login program written in Python3. So generally you should download and install *[Python3](https://www.python.org/downloads/)* and *[requests(Python package)](https://github.com/kennethreitz/requests)* first.
 
 ## Version *0.1alpha*
 This program can only be guaranteed to run among Shenzhen University students who use 'SZU_WLAN' or campus cable network. There are several simple settings can be configured and more will be added to make the program flexible.
