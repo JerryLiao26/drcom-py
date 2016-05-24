@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import os,sys,requests
+import os,sys,json,requests
 
-# Get python version
+# Get python major version
 py_version_index = str(sys.version_info).index('major')
 py_version = str(sys.version_info)[(py_version_index + 6) : (py_version_index + 7)]
+
+if py_version == "2": # Python 2.x
+    input = raw_input
 
 # Global params
 param_num = len(sys.argv)
@@ -21,49 +24,44 @@ def load_config():
     try:
         global stu_no,pwd,auth_url
 
-        config_file = open(file_path, 'r')
-        file_stream = config_file.read() # Read the config file
-        stu_no_index = file_stream.index("stu_no:") # Get all the config settings' index
-        pwd_index = file_stream.index("pwd:")
-        auth_url_index = file_stream.index("auth_url:")
-
-        stu_no = file_stream[(stu_no_index + 7) : (pwd_index - 1)] # Set as config.ini
-        pwd = file_stream[(pwd_index + 4) : (auth_url_index - 1)]
-        auth_url = file_stream[(auth_url_index + 9) : len(file_stream)]
-
-        config_file.close()
+        with open(file_path, 'r') as in_config:
+            config = json.load(in_config)
+            config = json.loads(config)
+            stu_no = config["stu_no"]
+            pwd = config["pwd"]
+            auth_url = config["auth_url"]
 
     except IOError:
         set_config()
 
 # Write settings in config.ini
 def set_config():
-    with open(file_path, 'w') as config_file:
-        config_file.write('===========' + os.linesep + 'User Info' + os.linesep + '===========' + os.linesep + 'stu_no:' + str(stu_no) + os.linesep + 'pwd:' + str(pwd) + os.linesep + 'auth_url:' + auth_url + os.linesep)
+    config = {
+        "stu_no" : stu_no,
+        "pwd" : pwd,
+        "auth_url" : auth_url
+    }
+    config = json.dumps(config)
+    with open(file_path, 'w') as out_config:
+        json.dump(config,out_config)
 
 # Start drcom confirm
 def confirm():
     load_config()
 
     # Currently depends on http://192.168.254.220/a41.js (shorten as "a41.js")
-    if py_version == "2":
-        stu_no_login = stu_no[ : len(stu_no) - 1]
-        pwd_login = pwd[ : len(pwd) - 1]
-
-    else:
-        stu_no_login = stu_no
-        pwd_login = pwd
-
+    stu_no_login = stu_no
+    pwd_login = pwd
     auth_url_login = auth_url
 
     login_data = {
-        'DDDDD' : stu_no_login,
-        'upass' : pwd_login,
-        'R1' : '0', # Defined in function cc in a41.js
-        'R2' : '', # Defined in function ee in a41.js
-        'R6' : '0',
-        'para' : '00',
-        '0MKKey' : '123456'
+        "DDDDD" : stu_no_login,
+        "upass" : pwd_login,
+        "R1" : "0", # Defined in function cc in a41.js
+        "R2" : "", # Defined in function ee in a41.js
+        "R6" : "0",
+        "para" : "00",
+        "0MKKey" : "123456"
     }
 
     r = requests.post(auth_url_login,data = login_data)
@@ -131,7 +129,7 @@ elif sys.argv[1] == "--config" or sys.argv[1] == "-c": # Use custom settings,pre
             input_pwd = input("pwd:")
 
         elif sys.argv[2] == "auth_url":
-            input_pwd = input("auth_url:")
+            input_auth_url = input("auth_url:")
 
         else:
             print('invalid param ' + sys.argv[2] + '! Please check "--help" or "-h" for usage')
