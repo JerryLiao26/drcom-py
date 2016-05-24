@@ -96,6 +96,12 @@ elif sys.argv[1] == "--help" or sys.argv[1] == "-h": # List help text
     print('--help | -h Display this text')
     print('--config | -c Configure settings')
     print('--config [setting_name] | -c [setting_name] Configure specific setting')
+    print('--version | -v Show the virsion of this program')
+
+elif sys.argv[1] == "--version" or sys.argv[1] == "-v":
+    print('drcom-py version : 0.1alpha-20160524')
+    print('Author: jerryliao')
+    print('Email: jerryliao26@gmail.com')
 
 elif sys.argv[1] == "--config" or sys.argv[1] == "-c": # Use custom settings,pressing enter will use default
     load_config()
