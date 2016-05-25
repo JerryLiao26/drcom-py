@@ -32,7 +32,6 @@ def load_config():
 
         with open(file_path, 'r') as in_config:
             config = json.load(in_config)
-            config = json.loads(config)
             stu_no = config["stu_no"]
             pwd = config["pwd"]
             auth_url = config["auth_url"]
@@ -47,7 +46,6 @@ def set_config():
         "pwd" : pwd,
         "auth_url" : auth_url
     }
-    config = json.dumps(config)
     with open(file_path, 'w') as out_config:
         json.dump(config,out_config)
 
