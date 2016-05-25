@@ -98,9 +98,9 @@ elif sys.argv[1] == "--help" or sys.argv[1] == "-h": # List help text
     print('Usage:')
     print('--show | -s Show present settings')
     print('--help | -h Display this text')
-    print('--config | -c Configure settings')
-    print('--config [setting_name] | -c [setting_name] Configure specific setting')
-    print('--version | -v Show the virsion of this program')
+    print('--config | -c Configure settings, enter for default')
+    print('--config [setting_name] | -c [setting_name] Configure specific setting, enter for default')
+    print('--version | -v Show the version of this program')
 
 elif sys.argv[1] == "--version" or sys.argv[1] == "-v":
     print('drcom-py version : ' + version)
