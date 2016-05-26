@@ -11,38 +11,42 @@ if py_version == "2": # Python 2.x
     input = raw_input
 
 # Global params
-version = "0.1beta-20160525"
+version = "0.1release-20160526"
 param_num = len(sys.argv)
 self_name = sys.argv[0]
 file_path = os.path.expanduser("~") + "/.drcom/drcom.config" # Create config file under ~/.drcom/
 auth_url = "http://192.168.254.220/a70.htm"
+api_site = "http://api.jerryliao.cn/" # Default api url
+api_type = "php" # Requested api file type
 stu_no = "jf"
 pwd = "jf"
 flag = "develop"
 
-# Load settings in config.ini
+# Load settings in drcom.config
 def load_config():
     try:
-        global stu_no,pwd,auth_url
-
+        global stu_no,pwd,auth_url,flag
         with open(file_path, 'r') as in_config:
             config = json.load(in_config)
-            config = json.loads(config)
             stu_no = config["stu_no"]
             pwd = config["pwd"]
             auth_url = config["auth_url"]
-
+            flag = config["flag"]
+            api_site = config["api_site"]
+            api_type = config["api_type"]
     except IOError:
         set_config()
 
-# Write settings in config.ini
+# Write settings in drcom.config
 def set_config():
     config = {
         "stu_no" : stu_no,
         "pwd" : pwd,
-        "auth_url" : auth_url
+        "auth_url" : auth_url,
+        "flag" : flag,
+        "api_site" : api_site,
+        "api_type" : api_type
     }
-    config = json.dumps(config)
     with open(file_path, 'w') as out_config:
         json.dump(config,out_config)
 
@@ -54,7 +58,6 @@ def confirm():
     stu_no_login = stu_no
     pwd_login = pwd
     auth_url_login = auth_url
-
     login_data = {
         "DDDDD" : stu_no_login,
         "upass" : pwd_login,
@@ -66,46 +69,31 @@ def confirm():
     }
 
     r = requests.post(auth_url_login,data = login_data)
-
     try:
         message_index = r.text.index("msga") # Param containing error message
         message_start_index = r.text.index("'",message_index)
         message_end_index = r.text.index("'",message_start_index + 1)
         respond = r.text[(message_start_index + 1) : message_end_index]
-
     except ValueError:
         respond = "login success"
-
     finally:
         print('Server respond:' + respond)
 
 if param_num == 1: # Use default settings
     confirm()
 
-# elif sys.argv[1] == "--develop" or sys.argv[1] == "-d": # Start develop mode
-#     flag = develop
-#
-# elif sys.argv[1] == "--user" or sys.argv[1] == "-u": # Start user mode
-#     flag = user
-
 elif sys.argv[1] == "--show" or sys.argv[1] == "-s": # Show present settings
-    load_config()
-    if flag == "develop":
-        print("stu_no:" + str(stu_no) + os.linesep + "pwd:" + str(pwd) + os.linesep + "auth_url:" + auth_url)
-
-    else:
-        print('Not under develop mode!')
-        exit()
+    print("stu_no:" + str(stu_no) + os.linesep + "pwd:" + str(pwd) + os.linesep + "auth_url:" + auth_url)
 
 elif sys.argv[1] == "--help" or sys.argv[1] == "-h": # List help text
     print('Usage:')
-    # print('--dev | -d Start develop mode')
-    # print('--user | -u Start user mode')
-    print('--show | -s Show present settings (Only under develop mode)')
+    print('--show | -s Show present settings')
     print('--help | -h Display this text')
     print('--config | -c Configure settings, enter for default')
     print('--config [setting_name] | -c [setting_name] Configure specific setting, enter for default')
     print('--version | -v Show the version of this program')
+    print('--develop Toggle develop mode on|off')
+    print('--status Check connection status')
 
 elif sys.argv[1] == "--version" or sys.argv[1] == "-v":
     print('drcom-py version : ' + version)
@@ -115,41 +103,106 @@ elif sys.argv[1] == "--version" or sys.argv[1] == "-v":
 elif sys.argv[1] == "--config" or sys.argv[1] == "-c": # Use custom settings,pressing enter will use default
     load_config()
 
-    input_stu_no = input_pwd = input_file_path = input_auth_url = "" # Initialize
+    input_stu_no = input_pwd = input_file_path = input_auth_url = input_api_site = input_api_type = "" # Initialize
 
     if param_num == 2:
         input_stu_no = input("stu_no:")
         input_pwd = input("pwd:")
         input_auth_url = input("auth_url:")
 
+        if flag == "develop":
+            input_api_site = input("api_site:")
+            input_api_type = input("api_type:")
+
     elif param_num == 3:
         if sys.argv[2] == "stu_no":
             input_stu_no = input("stu_no:")
-
         elif sys.argv[2] == "pwd":
             input_pwd = input("pwd:")
-
         elif sys.argv[2] == "auth_url":
             input_auth_url = input("auth_url:")
-
+        if flag == "develop":
+            if sys.argv[2] == "api_site":
+                input_api_site = input("api_site:")
+            elif sys.argv[2] == "api_type":
+                input_api_type = input("api_type:")
         else:
             print('invalid param ' + sys.argv[2] + '! Please check "--help" or "-h" for usage')
             exit()
 
     if input_stu_no == "":
         input_stu_no = stu_no
-
     if input_pwd == "":
         input_pwd = pwd
-
     if input_auth_url == "":
         input_auth_url = auth_url
+    if flag == "develop":
+        if input_api_site == "":
+            input_api_site = api_site
+        if input_api_type == "":
+            input_api_type = api_type
 
     stu_no = input_stu_no
     pwd = input_pwd
     auth_url = input_auth_url
+    if flag == "develop":
+        api_site = input_api_site
+        api_type = input_api_type
 
     set_config()
+
+elif sys.argv[1] == "--develop": # Toggle develop mode on|off
+    load_config()
+
+    if flag == "develop": # Toggle off
+        flag = "normal"
+        print('Developer mode disabled!')
+    else: # Toggle on
+        flag = "develop"
+        print('Developer mode enabled!')
+
+    set_config()
+
+elif sys.argv[1] == "--status": # Check status via http://api.jerryliao.cn
+    user_agent_str = "drcom-py/" + version
+    api_url_ua = api_site + "echo_ua." + api_type
+    api_url_ip = api_site + "echo_ip." + api_type
+    headers = {
+        "User-Agent" : user_agent_str
+    }
+    internet_status = 0 # Flag for connection status
+    intranet_status = 0
+
+    # Internet connection status
+    r = requests.get(url = api_url_ua,headers = headers)
+    if(r.text == user_agent_str): # Not blocked by Drcom
+        print('**Connecting to the Internet...connected')
+        internet_status = 1
+    else:
+        print('**Connecting to the Internet...disconnected')
+
+    # Intranet connection status
+    try:
+        r = requests.get(url = auth_url,timeout = 5)
+        print('**Connecting to campus Intranet...connected')
+        intranet_status = 1
+        intranet_ip_start_index = r.text.index('v46ip') # Find Intranet IP
+        intranet_ip_end_index = r.text.index('\'',intranet_ip_start_index + 7)
+        intranet_ip = r.text[(intranet_ip_start_index + 7) : intranet_ip_end_index]
+    except Exception:
+        print('**Connecting to campus Intranet...disconnected')
+
+    load_config()
+
+    if flag == "develop": # Show detailed info under develop mode
+        if(internet_status == 1):
+            r = requests.get(url = api_url_ip)
+            print('**Internet IP: ' + r.text)
+        if(intranet_status == 1):
+            print('**Intranet IP: ' + intranet_ip)
+
+    else: # Show only status
+        pass
 
 else:
     print('invalid param ' + sys.argv[1] + '! Please check "--help" or "-h" for usage')

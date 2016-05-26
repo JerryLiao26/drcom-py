@@ -5,6 +5,13 @@ echo "**The Python directory is set as \"/usr/bin/env python\" by default."
 echo "**If it does not matches your Python path,you might need to edit the path yourself before installation."
 
 cp ./drcom.py /usr/bin/drcom
+
+read -p "Install drcom-gui?[Y/n]:" ANSWER
+if [ ${ANSWER} = "Y" ] || [ ${ANSWER} = "y" ]
+then
+  cp ./drcom-gui.py /usr/bin/drcom-gui
+fi
+
 mkdir -p ~/.drcom/
 chmod 777 ~/.drcom/
 

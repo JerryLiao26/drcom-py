@@ -3,6 +3,7 @@ echo "**This script must be run under root or the uninstallation will not run su
 echo "**The uninstallation will only delete files created by default settings. If you have change the settings,you will need to delete it MANUALLY."
 
 rm -f /usr/bin/drcom
+rm -f /usr/bin/drcom-gui
 
 read -p "Delete user config file?[Y/n]:" ANSWER
 if [ ${ANSWER} = "Y" ] || [ ${ANSWER} = "y" ]
