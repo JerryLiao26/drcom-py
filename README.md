@@ -2,7 +2,7 @@
 This is a Drcom Web Authentication login program written in Python. The program can only be guaranteed to run among Shenzhen University students who use 'SZU_WLAN' or campus cable network. There are several simple settings can be configured and more will be added to make the program flexible. Generally you should download and install *[Python](https://www.python.org/downloads/)* and *[requests(Python package)](https://github.com/kennethreitz/requests)* first, while Embedded version uses *urllib(Python3)* or *urllib,urllib2(Python2)* instead of *requests* to post data. *Tkinter* might also needed to be manually installed if you need *drcom-gui*. Embedded version also removes some extended function.
 
 ## Features
-- ### 0.1release
+- **0.1release**
   - Good coding style in both version
   - Not bad feature designs
   - Compatible for both Python 2.x and Python 3.x
