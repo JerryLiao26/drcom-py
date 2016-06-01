@@ -1,19 +1,19 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import os,sys,json
+import os, sys, json
 
 # Get python major version
 py_version_index = str(sys.version_info).index('major')
 py_version = str(sys.version_info)[(py_version_index + 6) : (py_version_index + 7)]
 
 if py_version == "2": # Python2.x
-    from urllib2 import Request,urlopen
+    from urllib2 import urlopen
     from urllib import urlencode
     input = raw_input
 
 else: # Python 3.x and above
-    from urllib.request import Request,urlopen
+    from urllib.request import urlopen
     from urllib.parse import urlencode
 
 # Global params
@@ -30,7 +30,7 @@ pwd = "jf"
 # Load settings in drcom.config
 def load_config():
     try:
-        global stu_no,pwd,auth_url
+        global stu_no, pwd, auth_url
         with open(file_path, 'r') as in_config:
             config = json.load(in_config)
             stu_no = config["stu_no"]
@@ -52,7 +52,7 @@ def set_config():
         "api_type" : api_type
     }
     with open(file_path, 'w') as out_config:
-        json.dump(config,out_config)
+        json.dump(config, out_config)
 
 # Start drcom confirm
 def confirm():
@@ -72,14 +72,14 @@ def confirm():
         "0MKKey" : "123456"
     }
 
-    r = Request(auth_url_login)
-    f = urlopen(url = auth_url_login,data = urlencode(login_data).encode('utf-8')) # Encode to be used under Python3
+    # Encode to be used under Python3
+    f = urlopen(url=auth_url_login, data=urlencode(login_data).encode('utf-8'))
     text = f.read().decode('gbk')
     f.close()
     try:
         message_index = text.index("msga") # Param containing error message
-        message_start_index = text.index("'",message_index)
-        message_end_index = text.index("'",message_start_index + 1)
+        message_start_index = text.index("'", message_index)
+        message_end_index = text.index("'", message_start_index + 1)
         respond = text[(message_start_index + 1) : message_end_index]
     except ValueError:
         respond = "login success"
@@ -107,7 +107,8 @@ elif sys.argv[1] == "--version" or sys.argv[1] == "-v":
     print('Author: jerryliao')
     print('Email: jerryliao26@gmail.com')
 
-elif sys.argv[1] == "--config" or sys.argv[1] == "-c": # Use custom settings,pressing enter will use default
+# Use custom settings,pressing enter will use default
+elif sys.argv[1] == "--config" or sys.argv[1] == "-c":
     load_config()
 
     input_stu_no = input_pwd = input_file_path = input_auth_url = "" # Initialize
@@ -149,8 +150,8 @@ elif sys.argv[1] == "--status": # Check status via http://api.jerryliao.cn
     intranet_status = 0
 
     # Internet connection status
-    r = requests.get(url = api_url_ua,headers = headers)
-    if(r.text == user_agent_str): # Not blocked by Drcom
+    r = requests.get(url=api_url_ua, headers=headers)
+    if r.text == user_agent_str: # Not blocked by Drcom
         print('**Connecting to the Internet...connected')
         internet_status = 1
     else:
@@ -158,11 +159,11 @@ elif sys.argv[1] == "--status": # Check status via http://api.jerryliao.cn
 
     # Intranet connection status
     try:
-        r = requests.get(url = auth_url,timeout = 5)
+        r = requests.get(url=auth_url, timeout=5)
         print('**Connecting to campus Intranet...connected')
         intranet_status = 1
         intranet_ip_start_index = r.text.index('v46ip') # Find Intranet IP
-        intranet_ip_end_index = r.text.index('\'',intranet_ip_start_index + 7)
+        intranet_ip_end_index = r.text.index('\'', intranet_ip_start_index + 7)
         intranet_ip = r.text[(intranet_ip_start_index + 7) : intranet_ip_end_index]
     except Exception:
         print('**Connecting to campus Intranet...disconnected')

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-import os,sys,json,requests
+import os, sys, json, requests
 
 # Get python major version
 py_version_index = str(sys.version_info).index('major')
@@ -26,35 +26,35 @@ stu_no = "jf"
 pwd = "jf"
 
 class Application(Frame):
-    def __init__(self,master = None):
-        Frame.__init__(self,master)
+    def __init__(self, master=None):
+        Frame.__init__(self, master)
         self.pack()
         self.createWidgets()
 
     def createWidgets(self):
-        self.stuLabel = Label(self,text = 'Student no')
+        self.stuLabel = Label(self, text='Student no')
         self.stuLabel.pack()
         self.stuInput = Entry(self) # Stu_no input
         self.stuInput.pack()
 
-        self.pwdLabel = Label(self,text = 'Password')
+        self.pwdLabel = Label(self, text='Password')
         self.pwdLabel.pack()
         self.pwdInput = Entry(self) # Password input
         self.pwdInput.pack()
         self.pwdInput['show'] = '*'
 
-        self.loginButton = Button(self,text = 'Login',command = self.login)
+        self.loginButton = Button(self, text='Login', command=self.login)
         self.loginButton.pack()
-        self.quitButton = Button(self,text = 'Status',command = self.status)
+        self.quitButton = Button(self, text='Status', command=self.status)
         self.quitButton.pack()
 
-        self.versionLabel = Label(self,text = version)
+        self.versionLabel = Label(self, text=version)
         self.versionLabel.pack()
 
     # Load settings in drcom.config
     def load_config():
         try:
-            global stu_no,pwd,auth_url
+            global stu_no, pwd, auth_url
             with open(file_path, 'r') as in_config:
                 config = json.load(in_config)
                 stu_no = config["stu_no"]
@@ -76,18 +76,18 @@ class Application(Frame):
             "api_type" : api_type
         }
         with open(file_path, 'w') as out_config:
-            json.dump(config,out_config)
+            json.dump(config, out_config)
 
     def login(self):
         if self.stuInput.get() == "":
-            messagebox.showinfo('Attention','Student no can\'t be null!')
+            messagebox.showinfo('Attention', 'Student no can\'t be null!')
         if self.pwdInput.get() == "":
-            messagebox.showinfo('Attention','Password can\'t be null!')
+            messagebox.showinfo('Attention', 'Password can\'t be null!')
 
         if self.stuInput.get() != "" and self.pwdInput.get() != "":
             self.load_config
 
-            global stu_no,pwd
+            global stu_no, pwd
             stu_no = self.stuInput.get()
             pwd = self.pwdInput.get()
 
@@ -107,16 +107,16 @@ class Application(Frame):
                 "0MKKey" : "123456"
             }
 
-            r = requests.post(auth_url_login,data = login_data)
+            r = requests.post(auth_url_login, data=login_data)
             try:
                 message_index = r.text.index("msga") # Param containing error message
-                message_start_index = r.text.index("'",message_index)
-                message_end_index = r.text.index("'",message_start_index + 1)
+                message_start_index = r.text.index("'", message_index)
+                message_end_index = r.text.index("'", message_start_index + 1)
                 respond = r.text[(message_start_index + 1) : message_end_index]
             except ValueError:
                 respond = "login success"
             finally:
-                messagebox.showinfo('Server respond',respond)
+                messagebox.showinfo('Server respond', respond)
 
     def status(self):
         message_string = ""
@@ -128,31 +128,31 @@ class Application(Frame):
         }
 
         # Internet connection status
-        r = requests.get(url = api_url_ua,headers = headers)
-        if(r.text == user_agent_str): # Not blocked by Drcom
+        r = requests.get(url=api_url_ua, headers=headers)
+        if r.text == user_agent_str: # Not blocked by Drcom
             message_string += "Internet...connected,"
-            r = requests.get(url = api_url_ip)
+            r = requests.get(url=api_url_ip)
             message_string += " IP: " + r.text + os.linesep
         else:
             message_string += "Internet...disconnected" + os.linesep
 
         # Intranet connection status
         try:
-            r = requests.get(url = auth_url,timeout = 5)
+            r = requests.get(url=auth_url, timeout=5)
             message_string += "Campus Intranet...connected,"
             intranet_status = 1
             intranet_ip_start_index = r.text.index('v46ip') # Find Intranet IP
-            intranet_ip_end_index = r.text.index('\'',intranet_ip_start_index + 7)
+            intranet_ip_end_index = r.text.index('\'', intranet_ip_start_index + 7)
             intranet_ip = r.text[(intranet_ip_start_index + 7) : intranet_ip_end_index]
             message_string += " IP: " + intranet_ip
         except Exception:
             message_string += "Campus Intranet...disconnected"
 
-        messagebox.showinfo('Status',message_string)
+        messagebox.showinfo('Status', message_string)
 
 # Start GUI
 app = Application()
 app.master.title('drcom-py')
-app.master.maxsize(200,160)
-app.master.minsize(200,160)
+app.master.maxsize(200, 160)
+app.master.minsize(200, 160)
 app.mainloop()

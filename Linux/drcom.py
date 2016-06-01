@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import os,sys,json,requests
+import os, sys, json, requests
 
 # Get python major version
 py_version_index = str(sys.version_info).index('major')
@@ -25,7 +25,7 @@ flag = "develop"
 # Load settings in drcom.config
 def load_config():
     try:
-        global stu_no,pwd,auth_url,flag
+        global stu_no, pwd, auth_url, flag, api_site, api_type
         with open(file_path, 'r') as in_config:
             config = json.load(in_config)
             stu_no = config["stu_no"]
@@ -48,7 +48,7 @@ def set_config():
         "api_type" : api_type
     }
     with open(file_path, 'w') as out_config:
-        json.dump(config,out_config)
+        json.dump(config, out_config)
 
 # Start drcom confirm
 def confirm():
@@ -68,11 +68,11 @@ def confirm():
         "0MKKey" : "123456"
     }
 
-    r = requests.post(auth_url_login,data = login_data)
+    r = requests.post(auth_url_login, data=login_data)
     try:
         message_index = r.text.index("msga") # Param containing error message
-        message_start_index = r.text.index("'",message_index)
-        message_end_index = r.text.index("'",message_start_index + 1)
+        message_start_index = r.text.index("'", message_index)
+        message_end_index = r.text.index("'", message_start_index + 1)
         respond = r.text[(message_start_index + 1) : message_end_index]
     except ValueError:
         respond = "login success"
@@ -83,6 +83,8 @@ if param_num == 1: # Use default settings
     confirm()
 
 elif sys.argv[1] == "--show" or sys.argv[1] == "-s": # Show present settings
+    load_config()
+
     print("stu_no:" + str(stu_no) + os.linesep + "pwd:" + str(pwd) + os.linesep + "auth_url:" + auth_url)
 
 elif sys.argv[1] == "--help" or sys.argv[1] == "-h": # List help text
@@ -174,8 +176,8 @@ elif sys.argv[1] == "--status": # Check status via http://api.jerryliao.cn
     intranet_status = 0
 
     # Internet connection status
-    r = requests.get(url = api_url_ua,headers = headers)
-    if(r.text == user_agent_str): # Not blocked by Drcom
+    r = requests.get(url=api_url_ua, headers=headers)
+    if r.text == user_agent_str: # Not blocked by Drcom
         print('**Connecting to the Internet...connected')
         internet_status = 1
     else:
@@ -183,11 +185,11 @@ elif sys.argv[1] == "--status": # Check status via http://api.jerryliao.cn
 
     # Intranet connection status
     try:
-        r = requests.get(url = auth_url,timeout = 5)
+        r = requests.get(url=auth_url, timeout=5)
         print('**Connecting to campus Intranet...connected')
         intranet_status = 1
         intranet_ip_start_index = r.text.index('v46ip') # Find Intranet IP
-        intranet_ip_end_index = r.text.index('\'',intranet_ip_start_index + 7)
+        intranet_ip_end_index = r.text.index('\'', intranet_ip_start_index + 7)
         intranet_ip = r.text[(intranet_ip_start_index + 7) : intranet_ip_end_index]
     except Exception:
         print('**Connecting to campus Intranet...disconnected')
@@ -195,10 +197,10 @@ elif sys.argv[1] == "--status": # Check status via http://api.jerryliao.cn
     load_config()
 
     if flag == "develop": # Show detailed info under develop mode
-        if(internet_status == 1):
-            r = requests.get(url = api_url_ip)
+        if internet_status == 1:
+            r = requests.get(url=api_url_ip)
             print('**Internet IP: ' + r.text)
-        if(intranet_status == 1):
+        if intranet_status == 1:
             print('**Intranet IP: ' + intranet_ip)
 
     else: # Show only status
