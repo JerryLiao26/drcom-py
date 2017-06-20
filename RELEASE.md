@@ -1,3 +1,7 @@
+# 0.2release - 20170620
+- Add monitor mode in Linux version
+- Minor fixes
+
 # 0.1release - 20160526
 - Good coding style in both version
 - Not bad feature designs

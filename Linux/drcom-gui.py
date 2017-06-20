@@ -153,6 +153,6 @@ class Application(Frame):
 # Start GUI
 app = Application()
 app.master.title('drcom-py')
-app.master.maxsize(200, 160)
-app.master.minsize(200, 160)
+app.master.maxsize(200, 180)
+app.master.minsize(200, 180)
 app.mainloop()

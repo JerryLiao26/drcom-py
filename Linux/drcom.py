@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import os, sys, json, requests
+import os, sys, json, time, requests
 
 # Get python major version
 py_version_index = str(sys.version_info).index('major')
@@ -11,7 +11,7 @@ if py_version == "2": # Python 2.x
     input = raw_input
 
 # Global params
-version = "0.1release-20160526"
+version = "0.2release-20170620"
 param_num = len(sys.argv)
 self_name = sys.argv[0]
 file_path = os.path.expanduser("~") + "/.drcom/drcom.config" # Create config file under ~/.drcom/
@@ -91,8 +91,10 @@ elif sys.argv[1] == "--help" or sys.argv[1] == "-h": # List help text
     print('Usage:')
     print('--show | -s Show present settings')
     print('--help | -h Display this text')
+    print('--monitor | -m Use monitor mode')
     print('--config | -c Configure settings, enter for default')
     print('--config [setting_name] | -c [setting_name] Configure specific setting, enter for default')
+    print('--disconnect | -d Disconnect from the Intranet')
     print('--version | -v Show the version of this program')
     print('--develop Toggle develop mode on|off')
     print('--status Check connection status')
@@ -153,6 +155,23 @@ elif sys.argv[1] == "--config" or sys.argv[1] == "-c": # Use custom settings,pre
 
     set_config()
 
+elif sys.argv[1] == "--disconnect" or sys.argv[1] == "-d": # Disconnect from the intranet
+    load_config()
+
+    fake_data = {
+        "DDDDD" : "00000",
+        "upass" : "000000",
+        "R1" : "0",
+        "R2" : "",
+        "R6" : "0",
+        "para" : "00",
+        "0MKKey" : "123456"
+    }
+
+    auth_url_login = auth_url
+    requests.post(auth_url_login, data=fake_data)
+    print('Disconnected!')
+
 elif sys.argv[1] == "--develop": # Toggle develop mode on|off
     load_config()
 
@@ -165,7 +184,7 @@ elif sys.argv[1] == "--develop": # Toggle develop mode on|off
 
     set_config()
 
-elif sys.argv[1] == "--status": # Check status via http://api.jerryliao.cn
+elif sys.argv[1] == "--status": # Check status via api site
     user_agent_str = "drcom-py/" + version
     api_url_ua = api_site + "echo_ua." + api_type
     api_url_ip = api_site + "echo_ip." + api_type
@@ -205,6 +224,43 @@ elif sys.argv[1] == "--status": # Check status via http://api.jerryliao.cn
 
     else: # Show only status
         pass
+
+elif sys.argv[1] == "--monitor" or sys.argv[1] == '-m': # Timing check on Internet status. If not connected, automatically try reconnect
+    print('Running under monitor mode')
+    user_agent_str = "drcom-py/" + version
+    api_url_ua = api_site + "echo_ua." + api_type
+    headers = {
+        "User-Agent" : user_agent_str
+    }
+    internet_status = 0 # Flag for connection status
+    intranet_status = 0
+
+    while True:
+        # Internet connection status
+        r = requests.get(url=api_url_ua, headers=headers)
+        if r.text == user_agent_str: # Not blocked by Drcom
+            internet_status = 1
+        else:
+            internet_status = 0
+
+        # Intranet connection status
+        try:
+            r = requests.get(url=auth_url, timeout=5)
+            intranet_status = 1
+        except Exception:
+            intranet_status = 0
+
+        # With Intranet connection
+        if intranet_status == 1:
+            # No Internet connection
+            if internet_status == 0:
+                # Print current time
+                print(time.asctime(time.localtime(time.time())))
+                # Reconnect
+                confirm()
+
+        # Timer
+        time.sleep(60)
 
 else:
     print('invalid param ' + sys.argv[1] + '! Please check "--help" or "-h" for usage')
